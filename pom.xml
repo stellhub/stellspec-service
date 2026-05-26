@@ -87,7 +87,7 @@
                         <path>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
+                            <version>3.5.14</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
