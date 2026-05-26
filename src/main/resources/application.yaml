@@ -1,0 +1,97 @@
+spring:
+  application:
+    name: stellspec-service
+
+server:
+  port: ${SERVER_PORT:18090}
+
+stellspec:
+  elaticsearch:
+    bootstrap-enabled: ${STELLSPEC_ELATICSEARCH_BOOTSTRAP_ENABLED:false}
+    bootstrap-mode: ${STELLSPEC_ELATICSEARCH_BOOTSTRAP_MODE:CREATE_IF_ABSENT}
+    overwrite-templates: ${STELLSPEC_ELATICSEARCH_OVERWRITE_TEMPLATES:false}
+    index-pattern: logs-*-*
+    short-index-patterns:
+      - logs-*-access-*
+      - logs-*-debug-*
+    error-index-patterns:
+      - logs-*-error-*
+    audit-index-patterns:
+      - logs-audit-*
+    aggregate-index-patterns:
+      - logs-stellspec-aggregate-*
+  logs:
+    index-prefix: ${STELLSPEC_LOG_INDEX_PREFIX:stellspec-logs}
+    index-zone: ${STELLSPEC_LOG_INDEX_ZONE:UTC}
+    data-stream-type: logs
+    dataset-default: application
+    namespace-default: ${STELLSPEC_NAMESPACE:prod}
+    default-environment: ${STELLSPEC_ENVIRONMENT:prod}
+    fallback-service-name: ${STELLSPEC_FALLBACK_SERVICE_NAME:unknown-service}
+    include-raw-payload: ${STELLSPEC_INCLUDE_RAW_PAYLOAD:true}
+    max-message-length: ${STELLSPEC_MAX_MESSAGE_LENGTH:16384}
+    max-raw-payload-length: ${STELLSPEC_MAX_RAW_PAYLOAD_LENGTH:65536}
+    bulk:
+      max-actions: ${STELLSPEC_BULK_MAX_ACTIONS:500}
+      max-bytes: ${STELLSPEC_BULK_MAX_BYTES:5242880}
+      flush-interval-millis: ${STELLSPEC_BULK_FLUSH_INTERVAL_MILLIS:3000}
+      max-retries: ${STELLSPEC_BULK_MAX_RETRIES:2}
+      retry-backoff-millis: ${STELLSPEC_BULK_RETRY_BACKOFF_MILLIS:500}
+    filter:
+      drop-health-check-access-logs: true
+      debug-sample-rate: ${STELLSPEC_DEBUG_SAMPLE_RATE:0.1}
+      health-check-paths:
+        - /health
+        - /actuator/health
+    merge:
+      enabled: ${STELLSPEC_MERGE_ENABLED:true}
+      window-millis: ${STELLSPEC_MERGE_WINDOW_MILLIS:60000}
+      duplicate-threshold: ${STELLSPEC_MERGE_DUPLICATE_THRESHOLD:3}
+    bulk-consumer:
+      enabled: ${STELLSPEC_BULK_CONSUMER_ENABLED:false}
+      poll-timeout-millis: ${STELLSPEC_BULK_CONSUMER_POLL_TIMEOUT_MILLIS:3000}
+      partition-worker-threads: ${STELLSPEC_BULK_CONSUMER_PARTITION_WORKER_THREADS:4}
+      max-uncommitted-records: ${STELLSPEC_BULK_CONSUMER_MAX_UNCOMMITTED_RECORDS:10000}
+      backpressure-sleep-millis: ${STELLSPEC_BULK_CONSUMER_BACKPRESSURE_SLEEP_MILLIS:200}
+      failure-backoff-millis: ${STELLSPEC_BULK_CONSUMER_FAILURE_BACKOFF_MILLIS:1000}
+      commit-after-dead-letter: ${STELLSPEC_COMMIT_AFTER_DEAD_LETTER:true}
+      dead-letter-data-stream: ${STELLSPEC_DEAD_LETTER_DATA_STREAM:logs-stellspec-deadletter-prod}
+
+stellflux:
+  elaticsearch:
+    endpoints:
+      - ${ELATICSEARCH_ENDPOINT:http://192.168.1.14:9200}
+    username: ${ELATICSEARCH_USERNAME:}
+    password: ${ELATICSEARCH_PASSWORD:}
+    api-key: ${ELATICSEARCH_API_KEY:}
+    connect-timeout-millis: 1000
+    socket-timeout-millis: 30000
+  opentelemetry:
+    resource:
+      service-name: stellspec-service
+    logs:
+      enabled: false
+    metrics:
+      enabled: false
+    traces:
+      enabled: false
+  stellflow:
+    bootstrap-servers: ${STELLFLOW_BOOTSTRAP_SERVERS:192.168.1.14:9092}
+    client-id: ${spring.application.name}
+    request-timeout: 5s
+    retry:
+      max-attempts: 3
+      backoff: 100ms
+    consumer:
+      group-id: ${STELLSPEC_STELLFLOW_GROUP_ID:stellspec-service}
+      listener-enabled: ${STELLSPEC_STELLFLOW_LISTENER_ENABLED:true}
+      listener-auto-startup: ${STELLSPEC_STELLFLOW_LISTENER_AUTO_STARTUP:true}
+      poll-timeout: 3s
+      session-timeout-ms: 10000
+      heartbeat-interval: 3s
+      fetch-max-bytes: 1048576
+      offset-commit-metadata: ${spring.application.name}
+      topic-configs:
+        "[${STELLSPEC_STELLFLOW_LOG_TOPIC:stellspec.logs}]":
+          group-id: ${STELLSPEC_STELLFLOW_GROUP_ID:stellspec-service}
+          poll-timeout: 3s

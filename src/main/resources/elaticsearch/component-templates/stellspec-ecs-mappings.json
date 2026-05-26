@@ -1,0 +1,68 @@
+{
+  "template": {
+    "mappings": {
+      "dynamic": false,
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "message": { "type": "match_only_text" },
+        "log": {
+          "properties": {
+            "level": { "type": "keyword" },
+            "logger": { "type": "keyword" }
+          }
+        },
+        "service": {
+          "properties": {
+            "name": { "type": "keyword" },
+            "version": { "type": "keyword" },
+            "environment": { "type": "keyword" }
+          }
+        },
+        "event": {
+          "properties": {
+            "dataset": { "type": "keyword" },
+            "kind": { "type": "keyword" },
+            "category": { "type": "keyword" },
+            "type": { "type": "keyword" },
+            "hash": { "type": "keyword" }
+          }
+        },
+        "trace": {
+          "properties": {
+            "id": { "type": "keyword" }
+          }
+        },
+        "span": {
+          "properties": {
+            "id": { "type": "keyword" }
+          }
+        },
+        "tenant": {
+          "properties": {
+            "id": { "type": "keyword" },
+            "name": { "type": "keyword" }
+          }
+        },
+        "error": {
+          "properties": {
+            "type": { "type": "keyword" },
+            "message": { "type": "match_only_text" },
+            "stack_trace": { "type": "wildcard" },
+            "code": { "type": "keyword" }
+          }
+        },
+        "labels": { "type": "flattened" },
+        "attributes": { "type": "flattened" },
+        "stellspec": { "type": "flattened" },
+        "stellflow": {
+          "properties": {
+            "topic": { "type": "keyword" },
+            "partition": { "type": "integer" },
+            "offset": { "type": "long" },
+            "message_key": { "type": "keyword" }
+          }
+        }
+      }
+    }
+  }
+}

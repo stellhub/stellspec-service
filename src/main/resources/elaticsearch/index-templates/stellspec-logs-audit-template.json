@@ -1,0 +1,17 @@
+{
+  "index_patterns": ["logs-audit-*"],
+  "data_stream": {},
+  "priority": 900,
+  "composed_of": [
+    "stellspec-log-settings",
+    "stellspec-ecs-mappings"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "stellspec-logs-audit-policy"
+    }
+  },
+  "_meta": {
+    "description": "StellSpec audit log data stream template"
+  }
+}

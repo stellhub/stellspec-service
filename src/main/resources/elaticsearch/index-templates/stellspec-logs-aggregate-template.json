@@ -1,0 +1,17 @@
+{
+  "index_patterns": ["logs-stellspec-aggregate-*"],
+  "data_stream": {},
+  "priority": 750,
+  "composed_of": [
+    "stellspec-log-settings",
+    "stellspec-ecs-mappings"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "stellspec-logs-aggregate-policy"
+    }
+  },
+  "_meta": {
+    "description": "StellSpec aggregate log metric data stream template"
+  }
+}

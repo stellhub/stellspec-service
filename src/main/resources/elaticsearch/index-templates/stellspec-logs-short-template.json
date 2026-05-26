@@ -1,0 +1,17 @@
+{
+  "index_patterns": ["logs-*-access-*", "logs-*-debug-*"],
+  "data_stream": {},
+  "priority": 700,
+  "composed_of": [
+    "stellspec-log-settings",
+    "stellspec-ecs-mappings"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "stellspec-logs-short-policy"
+    }
+  },
+  "_meta": {
+    "description": "StellSpec short-retention log data stream template"
+  }
+}

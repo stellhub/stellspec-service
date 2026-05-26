@@ -1,0 +1,17 @@
+{
+  "index_patterns": ["logs-*-error-*"],
+  "data_stream": {},
+  "priority": 800,
+  "composed_of": [
+    "stellspec-log-settings",
+    "stellspec-ecs-mappings"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "stellspec-logs-error-policy"
+    }
+  },
+  "_meta": {
+    "description": "StellSpec error log data stream template"
+  }
+}
