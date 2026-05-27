@@ -63,7 +63,7 @@ stellspec:
 stellflux:
   elaticsearch:
     endpoints:
-      - ${ELATICSEARCH_ENDPOINT:http://192.168.1.14:9200}
+      - ${ELATICSEARCH_ENDPOINT:http://127.0.0.1:9200}
     username: ${ELATICSEARCH_USERNAME:}
     password: ${ELATICSEARCH_PASSWORD:}
     api-key: ${ELATICSEARCH_API_KEY:}
@@ -79,7 +79,7 @@ stellflux:
     traces:
       enabled: false
   stellflow:
-    bootstrap-servers: ${STELLFLOW_BOOTSTRAP_SERVERS:192.168.1.14:9092}
+    bootstrap-servers: ${STELLFLOW_BOOTSTRAP_SERVERS:127.0.0.1:9092}
     client-id: ${spring.application.name}
     request-timeout: 5s
     retry:
