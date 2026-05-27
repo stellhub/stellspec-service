@@ -14,6 +14,7 @@
     <groupId>io.github.stellhub</groupId>
     <artifactId>stellspec-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>stellspec-service</name>
     <description>StellSpec log ingestion service backed by Stellflow and Elaticsearch</description>
 
@@ -22,6 +23,7 @@
         <stellflux.version>1.0.1</stellflux.version>
         <lombok.version>1.18.46</lombok.version>
         <spring-boot.version>3.5.14</spring-boot.version>
+        <start-class>io.github.stellspec.StellspecServiceApplication</start-class>
     </properties>
 
     <dependencies>
@@ -73,6 +75,7 @@
     </dependencies>
 
     <build>
+        <finalName>stellspec-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -87,7 +90,7 @@
                         <path>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>3.5.14</version>
+                            <version>${spring-boot.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -95,6 +98,15 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>${start-class}</mainClass>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

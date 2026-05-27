@@ -63,6 +63,9 @@ public class StellspecLogProperties {
     /** 独立 Stellflow 批量消费配置。 */
     private BulkConsumer bulkConsumer = new BulkConsumer();
 
+    /** 可观测性日志配置。 */
+    private Observability observability = new Observability();
+
     /**
      * 根据日志时间生成索引名。
      *
@@ -179,5 +182,17 @@ public class StellspecLogProperties {
 
         /** Dead letter data stream 名称。 */
         private String deadLetterDataStream = "logs-stellspec-deadletter-prod";
+    }
+
+    /** 可观测性日志配置。 */
+    @Getter
+    @Setter
+    public static class Observability {
+
+        /** 是否输出 ES 写入 INFO 汇总日志。 */
+        private boolean infoSummaryEnabled = true;
+
+        /** ES 写入 INFO 汇总日志最小间隔，单位毫秒。 */
+        private long infoSummaryIntervalMillis = 10_000L;
     }
 }

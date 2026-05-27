@@ -25,6 +25,8 @@ public class StellspecLogIngestionService {
 
     private final BulkFailureHandler bulkFailureHandler;
 
+    private final ElaticsearchWriteProgressLogger writeProgressLogger;
+
     /**
      * 归一化并写入 Stellflow 日志消息。
      *
@@ -33,19 +35,37 @@ public class StellspecLogIngestionService {
      */
     public IngestionResult ingest(StellflowMessage message) {
         List<RoutedLogDocument> documents = pipeline.process(message);
+        if (documents.isEmpty()) {
+            log.debug(
+                    "Skipped Stellflow log topic={} partition={} offset={} reason=filtered_or_merged",
+                    message.topic(),
+                    message.partition(),
+                    message.offset());
+            writeProgressLogger.recordSkipped(message);
+            return new IngestionResult(
+                    null,
+                    null,
+                    message.topic(),
+                    message.partition(),
+                    message.offset(),
+                    Instant.now(),
+                    "skipped");
+        }
         BulkWriteResult result = bulkLogBuffer.writeNow(documents);
         BulkFailureHandlingResult handlingResult =
                 bulkFailureHandler.handle(documents, result, List.of(message), "manual-ingest");
+        writeProgressLogger.recordWrite(message, documents, result);
         RoutedLogDocument first = documents.isEmpty() ? null : documents.getFirst();
         String dataStreamName = first == null ? null : first.dataStreamName();
         String id = first == null ? null : first.document().getId();
         Instant eventTime = first == null ? Instant.now() : first.document().getTimestamp();
-        log.info(
-                "Bulk indexed Stellflow log topic={} partition={} offset={} dataStream={} successCount={} failureCount={}",
+        log.debug(
+                "Indexed Stellflow log topic={} partition={} offset={} dataStream={} documentCount={} successCount={} failureCount={}",
                 message.topic(),
                 message.partition(),
                 message.offset(),
                 dataStreamName,
+                documents.size(),
                 result.successCount(),
                 result.failureCount());
         return new IngestionResult(
@@ -67,8 +87,14 @@ public class StellspecLogIngestionService {
     public BulkWriteResult ingestBatch(List<StellflowMessage> messages) {
         List<RoutedLogDocument> documents =
                 messages.stream().flatMap(message -> pipeline.process(message).stream()).toList();
+        if (documents.isEmpty()) {
+            BulkWriteResult result = BulkWriteResult.success(0);
+            writeProgressLogger.recordBatch(messages, documents, result);
+            return result;
+        }
         BulkWriteResult result = bulkLogBuffer.writeNow(documents);
         bulkFailureHandler.handle(documents, result, messages, "batch-ingest");
+        writeProgressLogger.recordBatch(messages, documents, result);
         return result;
     }
 

@@ -72,6 +72,6 @@ public class LogDocument {
         if (rawPayload != null) {
             source.put("raw_payload", rawPayload);
         }
-        return source;
+        return ElaticsearchSourceValues.toSourceMap(source);
     }
 }

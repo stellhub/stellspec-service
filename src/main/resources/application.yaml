@@ -56,6 +56,9 @@ stellspec:
       failure-backoff-millis: ${STELLSPEC_BULK_CONSUMER_FAILURE_BACKOFF_MILLIS:1000}
       commit-after-dead-letter: ${STELLSPEC_COMMIT_AFTER_DEAD_LETTER:true}
       dead-letter-data-stream: ${STELLSPEC_DEAD_LETTER_DATA_STREAM:logs-stellspec-deadletter-prod}
+    observability:
+      info-summary-enabled: ${STELLSPEC_ES_WRITE_INFO_SUMMARY_ENABLED:true}
+      info-summary-interval-millis: ${STELLSPEC_ES_WRITE_INFO_SUMMARY_INTERVAL_MILLIS:10000}
 
 stellflux:
   elaticsearch:
@@ -92,6 +95,6 @@ stellflux:
       fetch-max-bytes: 1048576
       offset-commit-metadata: ${spring.application.name}
       topic-configs:
-        "[${STELLSPEC_STELLFLOW_LOG_TOPIC:stellspec.logs}]":
+        "[stello11y.logs.app.prod.v1]":
           group-id: ${STELLSPEC_STELLFLOW_GROUP_ID:stellspec-service}
           poll-timeout: 3s

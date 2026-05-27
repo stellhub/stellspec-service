@@ -64,7 +64,7 @@ public class EcsLogDocument {
         put(source, "attributes", attributes == null ? Map.of() : attributes);
         put(source, "stellspec", Map.of("ingest", ingestToMap(stellspecIngest)));
         put(source, "stellflow", sourceToMap(stellflowSource));
-        return source;
+        return ElaticsearchSourceValues.toSourceMap(source);
     }
 
     private Map<String, Object> logToMap(EcsLog value) {
