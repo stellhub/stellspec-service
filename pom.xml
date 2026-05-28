@@ -13,7 +13,7 @@
 
     <groupId>io.github.stellhub</groupId>
     <artifactId>stellspec-service</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <name>stellspec-service</name>
     <description>StellSpec log ingestion service backed by Stellflow and Elaticsearch</description>
