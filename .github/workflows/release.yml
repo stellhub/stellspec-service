@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build deployable artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Resolve release version
+        id: version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME:-manual}"
+          VERSION="${VERSION//\//-}"
+          echo "value=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Test
+        run: mvn -B -ntp test
+
+      - name: Build executable jar
+        run: mvn -B -ntp package -DskipTests
+
+      - name: Assemble deploy zip
+        shell: bash
+        run: |
+          mkdir -p target/deploy
+          cp target/stellspec-service.jar target/deploy/stellspec-service.jar
+          cp src/main/resources/application.yaml target/deploy/application.yaml
+          cp src/main/resources/logback.xml target/deploy/logback.xml
+          cp deploy/README.md target/deploy/README.md
+          cd target/deploy
+          zip -r "../stellspec-service-${{ steps.version.outputs.value }}.zip" .
+
+      - name: Upload executable jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellspec-service-${{ steps.version.outputs.value }}-jar
+          path: target/stellspec-service.jar
+          if-no-files-found: error
+
+      - name: Upload deploy zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: stellspec-service-${{ steps.version.outputs.value }}-deploy
+          path: target/stellspec-service-${{ steps.version.outputs.value }}.zip
+          if-no-files-found: error
